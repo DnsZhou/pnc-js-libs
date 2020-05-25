@@ -10,6 +10,12 @@
     function isGroupBuildStatusChangedNotification(notification) {
         return notification.job === "GROUP_BUILD";
     }
+    function isGenericSettingMaintenanceNotification(notification) {
+        return notification.job === "GENERIC_SETTING" && notification.notificationType === "MAINTENANCE_STATUS_CHANGED";
+    }
+    function isGenericSettingAnnouncementNotification(notification) {
+        return notification.job === "GENERIC_SETTING" && notification.notificationType === "NEW_ANNOUNCEMENT";
+    }
 
     class MessageBus {
         constructor(url) {
@@ -95,6 +101,20 @@
             return this.addDispatcher(notification => {
                 if (isGroupBuildStatusChangedNotification(notification) && notification.groupBuild.status === status) {
                     listener(notification.groupBuild, notification);
+                }
+            });
+        }
+        onGenericSettingMaintenanceChanged(listener) {
+            return this.addDispatcher(notification => {
+                if (isGenericSettingMaintenanceNotification(notification)) {
+                    listener(notification);
+                }
+            });
+        }
+        onGenericSettingNewAnnouncement(listener) {
+            return this.addDispatcher(notification => {
+                if (isGenericSettingAnnouncementNotification(notification)) {
+                    listener(notification);
                 }
             });
         }
